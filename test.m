@@ -21,8 +21,7 @@ while (count~=data_rows)
     
    
 end
- a1 = libpointer("HE_Edge");
- a2= [libpointer("HE_Edge");a1];
- a3= libpointer("HE_Edge");
+a = HE_Vertex;
+x = libpointer("HE_Vertex",a);
 
 
