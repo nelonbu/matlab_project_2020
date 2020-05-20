@@ -1,7 +1,7 @@
 clc
 clear
 %读取txt文件
-filename = 'TEST.txt';
+filename = 'test_cubic.txt';
 datatable = importdata(filename);
 %数据
 header = char(datatable.rowheaders);
@@ -23,11 +23,11 @@ while (count~=data_rows)
     end
     
     
-    
+    tic
     if (header(count)=='f')
         mesh.InsertFace(data(count,1),data(count,2),data(count,3));
     end
-    
+    toc
 end
 
 
