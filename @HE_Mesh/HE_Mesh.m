@@ -105,5 +105,29 @@ classdef HE_Mesh <handle
             face.f_verts = fvert;
             mesh.m_faces = [mesh.m_faces;face];
        end
+       
+       function LoadFromTxt(mesh,filename)
+            datatable = importdata(filename);
+            %Êý¾Ý
+            header = char(datatable.rowheaders);
+            data = datatable.data;
+
+            [data_rows,~] = size(data);
+            count = 0;
+            
+            while (count~=data_rows)
+                count = count + 1;
+
+                if (header(count)=='v')
+                    mesh.InsertVertex(data(count,1),data(count,2),data(count,3));
+                end
+
+                tic
+                if (header(count)=='f')
+                    mesh.InsertFace(data(count,1),data(count,2),data(count,3));
+                end
+                toc
+            end
+       end
    end
 end
