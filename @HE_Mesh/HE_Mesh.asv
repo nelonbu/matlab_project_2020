@@ -116,19 +116,18 @@ classdef HE_Mesh <handle
             count = 0;
             
             while (count~=data_rows)
-                count = count + 1
-                %tic
+                count = count + 1;
+                tic
                 if (header(count)=='v')
                     mesh.InsertVertex(data(count,1),data(count,2),data(count,3));
                 end
 
-                tic
+               % tic
                 if (header(count)=='f')
                     mesh.InsertFace(data(count,1),data(count,2),data(count,3));
                 end
-                timelen(count)=toc
+                time=toc
             end
-            ave=mean(timelen)
        end
    end
 end
