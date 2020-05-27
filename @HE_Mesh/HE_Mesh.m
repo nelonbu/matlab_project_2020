@@ -5,7 +5,7 @@ classdef HE_Mesh <handle
       m_faces = [HE_Face.empty];
    end
    properties
-      dict = [HE_Edge.empty]; %字典
+      dict = struct(); %字典
    end
    methods
        %1.1 初始化函数
@@ -20,11 +20,13 @@ classdef HE_Mesh <handle
            %tmp = table({marker},{edge});          
            %mesh.dict = [mesh.dict;tmp];        
           %time = toc
-          mesh.dict(num_v1,num_v2) = edge;
+          marker = strcat('e',int2str(num_v1),'_',int2str(num_v2));
+          mesh.dict=setfield(mesh.dict,marker,edge);
        end
        
         %1.3 在字典中查找元素
        function edge = dict_find(mesh,num_v1,num_v2)
+           %版本1
            %TF = ismissing(mesh.dict,marker);
             %if sum(TF)==0
                 %edge = 0;
@@ -33,16 +35,25 @@ classdef HE_Mesh <handle
                 %[row,~] = find(TF);
                 %edge = mesh.dict.Var2{row};
             %end
-            [row,col] = size(mesh.dict);
-            if ((num_v1>row) ||(num_v2>col)) %超出范围，一定不在表内 
+            %版本2
+            %[row,col] = size(mesh.dict);
+            %if ((num_v1>row) ||(num_v2>col)) %超出范围，一定不在表内 
+                %edge = 0;
+                %return
+            %elseif(mesh.dict(num_v1,num_v2)==[])%不在表内
+                %edge = 0;
+                %return
+            %else %在表内，则将其补全
+                %edge = mesh.dict(num_v1,num_v2);
+                %return
+            %end
+            %版本3
+            marker = strcat('e',int2str(num_v1),'_',int2str(num_v2));
+            bool = isfield(mesh.dict,marker);
+            if bool
+                edge = getfield(mesh.dict,marker);
+            else 
                 edge = 0;
-                return
-            elseif(mesh.dict(num_v1,num_v2)==[])%不在表内
-                edge = 0;
-                return
-            else %在表内，则将其补全
-                edge = mesh.dict(num_v1,num_v2);
-                return
             end
        end
        
@@ -114,21 +125,24 @@ classdef HE_Mesh <handle
 
             [data_rows,~] = size(data);
             count = 0;
-            
+            timelen = 0.002;    
             while (count~=data_rows)
-                count = count + 1
+                count = count + 1;
                 %tic
                 if (header(count)=='v')
                     mesh.InsertVertex(data(count,1),data(count,2),data(count,3));
                 end
 
-                tic
+                
                 if (header(count)=='f')
+                    tic
                     mesh.InsertFace(data(count,1),data(count,2),data(count,3));
+                    timelen(end+1)=toc;
+                    timelen(end)
                 end
-                timelen(count)=toc
+                
             end
-            ave=mean(timelen)
+            %ave = mean(timelen);
        end
    end
 end
